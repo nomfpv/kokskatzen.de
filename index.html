@@ -261,6 +261,12 @@ html[data-fog-noise="off"] #gate{ transition:none; }
 .inv .fg-item:hover::before{ filter:none; box-shadow:0 0 8px var(--fg-c); }
 #about .col{ width:min(100%,660px); }
 @media (max-width:480px){ .tech{ grid-template-columns:1fr; gap:.35rem; } .tech .tl{ padding-top:0; } }
+/* project cards with a GitHub mark (outside the card link: links cannot nest) */
+.pw{ position:relative; display:grid; }
+.pw.has-gh .proj{ padding-right:2.9rem !important; }
+.gh{ position:absolute; top:.75rem; right:.8rem; z-index:2; padding:2px; color:#d9d5cd; opacity:.45; transition:opacity .18s; text-decoration:none; }
+.gh pre{ margin:0; font:3.6px/1.02 "Cascadia Mono","Segoe UI Symbol",Consolas,monospace; user-select:none; }
+.gh:hover,.gh:focus-visible{ opacity:1; }
 </style>
 </head>
 <body class="fg-root">
@@ -295,7 +301,6 @@ html[data-fog-noise="off"] #gate{ transition:none; }
       <li><a class="fg-link" href="#about">About</a></li>
       <li><a class="fg-link" href="#projects">Projects</a></li>
       <li><a class="fg-link" href="https://github.com/nomfpv">GitHub</a></li>
-      <li><a class="fg-link" href="https://github.com/nomfpv/kokskatzen.de">Source</a></li>
       <li><a class="fg-link" href="mailto:nomsec@proton.me">Mail</a></li>
       <li class="dcm" title="Discord"><span>nom787</span><pre aria-hidden="true">⠀⠀⣠⣶⣾⣿⣤⣶⣶⣤⣿⣷⣶⣄⠀⠀
 ⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀
@@ -370,7 +375,8 @@ html[data-fog-noise="off"] #gate{ transition:none; }
     <h2 class="emerge">projects</h2>
     <div class="town">
       <div class="places">
-        <a class="fg-card proj emerge" data-place="deadsense" href="https://deadsense.eu">
+        <div class="pw emerge">
+        <a class="fg-card proj" data-place="deadsense" href="https://deadsense.eu">
           <div class="shot" style="background-image:url(img/deadsense.jpg)"></div>
           <div>
             <h3>deadsense</h3>
@@ -379,7 +385,9 @@ html[data-fog-noise="off"] #gate{ transition:none; }
             <div class="tags"><span>Deadlock</span><span>Mod</span></div>
           </div>
         </a>
-        <a class="fg-card proj emerge" data-place="spanisch" href="https://wiegutkannkevinspanisch.de">
+        </div>
+        <div class="pw has-gh emerge">
+        <a class="fg-card proj" data-place="spanisch" href="https://wiegutkannkevinspanisch.de">
           <div class="shot" style="background-image:url(img/spanisch.jpg);background-position:85% 40%"></div>
           <div>
             <h3>wie gut kann Kevin Spanisch</h3>
@@ -388,6 +396,32 @@ html[data-fog-noise="off"] #gate{ transition:none; }
             <div class="tags"><span>Node.js</span><span>yt-dlp</span><span>Weekly</span></div>
           </div>
         </a>
+        <a class="gh" href="https://github.com/nomfpv/wiegutkannkevinspanish" title="Source on GitHub" aria-label="wie gut kann Kevin Spanisch on GitHub"><pre aria-hidden="true">⠀⠀⣠⣴⣾⣿⣿⣷⣶⣄⠀⠀
+⢀⣾⣿⠛⠿⠿⠿⠿⠛⣿⣷⡀
+⣼⣿⡟⠀⠀⠀⠀⠀⠀⢺⣿⣧
+⣿⣿⡇⠀⠀⠀⠀⠀⠀⢨⣿⣿
+⢻⣿⣷⣀⠀⠀⠀⠀⣀⣼⣿⡟
+⠀⢿⣎⠛⠋⠀⠀⢹⣿⣿⡿⠀
+⠀⠀⠙⠻⠇⠀⠀⠸⠟⠋⠀⠀</pre></a>
+        </div>
+        <div class="pw has-gh emerge">
+        <a class="fg-card proj" data-place="site" href="https://kokskatzen.de">
+          <div class="shot" style="background-image:url(stills/road.png);background-position:72% 45%;image-rendering:pixelated"></div>
+          <div>
+            <h3>kokskatzen.de</h3>
+            <p>This page. A foggy road in WebGL, one HTML file, no framework.</p>
+            <div class="url">kokskatzen.de &nearr;</div>
+            <div class="tags"><span>WebGL</span><span>JavaScript</span></div>
+          </div>
+        </a>
+        <a class="gh" href="https://github.com/nomfpv/kokskatzen.de" title="Source on GitHub" aria-label="kokskatzen.de on GitHub"><pre aria-hidden="true">⠀⠀⣠⣴⣾⣿⣿⣷⣶⣄⠀⠀
+⢀⣾⣿⠛⠿⠿⠿⠿⠛⣿⣷⡀
+⣼⣿⡟⠀⠀⠀⠀⠀⠀⢺⣿⣧
+⣿⣿⡇⠀⠀⠀⠀⠀⠀⢨⣿⣿
+⢻⣿⣷⣀⠀⠀⠀⠀⣀⣼⣿⡟
+⠀⢿⣎⠛⠋⠀⠀⢹⣿⣿⡿⠀
+⠀⠀⠙⠻⠇⠀⠀⠸⠟⠋⠀⠀</pre></a>
+        </div>
       </div>
     </div>
   </div>
