@@ -1,0 +1,375 @@
+/* ==========================================================================
+   FOG KIT — shared interface core for the Kokskatzen sites
+   One town in the fog. Everything is namespaced (.fg-*, --fg-*, data-fog-*)
+   so the file can be injected into foreign apps without touching their
+   markup. Element defaults only apply inside .fg-root.
+
+   html[data-fog-noise="on|low|off"]   the "Noise Effect" option
+   html[data-fog-season="fog|xmas"]    December layer
+   html[data-fog-world="fog|other"]    Otherworld, only when something is wrong
+   ========================================================================== */
+
+@font-face{ font-family:"Fog Serif"; font-weight:300 700; src:url("fonts/serif.woff2") format("woff2"); font-display:swap; }
+@font-face{ font-family:"Fog Serif"; font-style:italic; font-weight:300 700; src:url("fonts/serif-italic.woff2") format("woff2"); font-display:swap; }
+@font-face{ font-family:"Fog Sans"; font-weight:300 700; src:url("fonts/sans.woff2") format("woff2"); font-display:swap; }
+
+@property --fg-draw{ syntax:"<angle>"; inherits:false; initial-value:0deg; }
+
+:root{
+  /* fog world: drained greys, mauve, sick green */
+  --fg-void:#0b0c0d;
+  --fg-ash-1:#131516;
+  --fg-ash-2:#1a1c1e;
+  --fg-ash-3:#232628;
+  --fg-ash-4:#303436;
+  --fg-ash-5:#474b4c;
+  --fg-fog-1:#77757a;
+  --fg-fog-2:#9a969a;
+  --fg-fog-3:#bdb8b6;
+  --fg-text:#d9d5cd;
+  --fg-dim:#a09c98;
+  --fg-faint:#6f6d6c;
+  --fg-mauve:#7c6a77;
+  --fg-moss:#6c775f;
+  --fg-paper:#cdc6b1;
+  --fg-paper-2:#b9b19a;
+  --fg-ink:#1c1a16;
+  --fg-brass:#8d7b52;
+  /* the only saturated colour: the save square. Marks (underline, strike, tick) are clean pale lines. */
+  --fg-red:#b5121b;
+  --fg-pen:#c8242b;
+  /* health tint, SH2 status screen */
+  --fg-fine:#5e8c58;
+  --fg-hurt:#b48a38;
+  --fg-dying:#a8322c;
+  /* otherworld */
+  --fg-rust:#6e2f1c;
+  --fg-rust-2:#3a1810;
+
+  --fg-surface:rgba(19,21,22,.82);
+  --fg-surface-solid:#17191b;
+  --fg-line:rgba(189,184,182,.16);
+  --fg-line-strong:rgba(189,184,182,.34);
+
+  /* type: a quiet high-contrast serif for titles and menus, a clean sans for everything read at small size */
+  --fg-serif:"Fog Serif","Cormorant Garamond","EB Garamond",Georgia,"Times New Roman",serif;
+  --fg-sans:"Fog Sans",Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --fg-memo:var(--fg-sans);
+
+  --fg-grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .75 0 0 0 0 .75 0 0 0 0 .75 0 0 0 1.1 -.25'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  --fg-static:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4 .35' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .9 0 0 0 0 .9 0 0 0 0 .9 0 0 0 2.4 -1'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  --fg-pen-circle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3C/svg%3E");
+  --fg-pen-scribble:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 20H200' fill='none' stroke='%23d9d5cd' stroke-width='1' vector-effect='non-scaling-stroke' opacity='.75'/%3E%3C/svg%3E");
+  --fg-pen-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 13l5 5L20 6' fill='none' stroke='%23d9d5cd' stroke-width='2'/%3E%3C/svg%3E");
+  --fg-pen-line:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8' preserveAspectRatio='none'%3E%3Cpath d='M0 6H200' fill='none' stroke='%23d9d5cd' stroke-width='1' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  --fg-grating:
+    repeating-linear-gradient(45deg, rgba(0,0,0,.55) 0 2px, transparent 2px 9px),
+    repeating-linear-gradient(-45deg, rgba(0,0,0,.55) 0 2px, transparent 2px 9px);
+}
+
+/* Otherworld: rust, grating and darkness. Only set when something is wrong. */
+html[data-fog-world="other"]{
+  --fg-ash-1:#120b08; --fg-ash-2:#1a0f0b; --fg-ash-3:#27150f; --fg-ash-4:#3a1f15; --fg-ash-5:#58301f;
+  --fg-fog-1:#7d5a48; --fg-fog-2:#a07c66; --fg-fog-3:#c2a590;
+  --fg-surface:rgba(22,11,8,.88); --fg-surface-solid:#170c09;
+  --fg-line:rgba(190,120,80,.2); --fg-line-strong:rgba(190,120,80,.42);
+  --fg-mauve:#7a3b28; --fg-moss:#6e4a2a;
+}
+/* In December the Otherworld is ice (Shattered Memories), not rust. */
+html[data-fog-season="xmas"][data-fog-world="other"]{
+  --fg-ash-1:#0b1014; --fg-ash-2:#101820; --fg-ash-3:#17232d; --fg-ash-4:#22333f; --fg-ash-5:#3a5361;
+  --fg-fog-1:#6f8c9b; --fg-fog-2:#9bb8c6; --fg-fog-3:#c9dde6;
+  --fg-surface:rgba(11,18,24,.86); --fg-surface-solid:#0d151b;
+  --fg-line:rgba(170,210,230,.24); --fg-line-strong:rgba(170,210,230,.5);
+  --fg-mauve:#5d7f92; --fg-moss:#58808c;
+  --fg-grating:
+    linear-gradient(115deg, transparent 0 46%, rgba(200,230,245,.10) 47% 48%, transparent 49%),
+    linear-gradient(64deg, transparent 0 61%, rgba(200,230,245,.08) 62% 63%, transparent 64%),
+    linear-gradient(170deg, transparent 0 30%, rgba(200,230,245,.06) 31% 32%, transparent 33%);
+}
+
+/* ------------------------------------------------------------------ base */
+.fg-root{
+  margin:0; background:var(--fg-ash-1); color:var(--fg-text);
+  font-family:var(--fg-sans); font-size:15px; line-height:1.6; letter-spacing:.005em;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.fg-root *,.fg-root *::before,.fg-root *::after{ box-sizing:border-box; }
+.fg-root ::selection{ background:var(--fg-fog-3); color:var(--fg-ink); }
+.fg-root h1,.fg-root h2,.fg-root h3{ font-family:var(--fg-serif); font-weight:400; letter-spacing:.015em; line-height:1.1; margin:0; color:var(--fg-text); }
+.fg-root a:where(:not([class])){ color:inherit; }
+.fg-root :focus-visible{ outline:1px solid var(--fg-fog-3); outline-offset:3px; }
+.fg-serif{ font-family:var(--fg-serif); }
+.fg-memo{ font-family:var(--fg-memo); }
+.fg-dim{ color:var(--fg-dim); }
+.fg-label{ font-family:var(--fg-sans); font-weight:500; font-size:.68em; letter-spacing:.26em; text-transform:uppercase; color:var(--fg-faint); }
+
+/* ------------------------------------------------------------ backdrop
+   Fog, grain and scenery live here, behind the content, never over it.   */
+.fg-backdrop{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden;
+  background:
+    radial-gradient(120% 70% at 50% 108%, #2a2b2c 0%, transparent 60%),
+    linear-gradient(180deg, #3b3a3f 0%, #4a474d 34%, #55525a 52%, #2c2d2e 78%, #151617 100%); }
+html[data-fog-world="other"] .fg-backdrop{
+  background: var(--fg-grating), radial-gradient(90% 70% at 50% 40%, #3b1b10 0%, #1a0c08 55%, #070403 100%); }
+html[data-fog-season="xmas"][data-fog-world="other"] .fg-backdrop{
+  background: var(--fg-grating), radial-gradient(90% 70% at 50% 40%, #33505f 0%, #132029 55%, #05090c 100%); }
+.fg-backdrop::before,.fg-backdrop::after{ content:""; position:absolute; inset:-20%; }
+/* a live 3D scene brings its own fog and dither */
+.fg-backdrop:has(.fg-scene.is-live)::before,.fg-backdrop:has(.fg-scene.is-live)::after{ display:none; }
+/* two slow banks of fog */
+.fg-backdrop::before{
+  background:
+    radial-gradient(38% 26% at 22% 58%, rgba(170,164,172,.34), transparent 70%),
+    radial-gradient(44% 30% at 78% 46%, rgba(160,156,160,.28), transparent 72%),
+    radial-gradient(60% 34% at 50% 80%, rgba(150,150,146,.22), transparent 75%);
+  animation:fg-drift 70s ease-in-out infinite alternate; }
+/* grain */
+.fg-backdrop::after{ inset:0; background:var(--fg-grain); opacity:.20; mix-blend-mode:overlay; animation:fg-grain 1s steps(6) infinite; }
+html[data-fog-world="other"] .fg-backdrop::before{ opacity:.25; }
+@keyframes fg-drift{ from{ transform:translate3d(-4%,0,0) scale(1); } to{ transform:translate3d(4%,-2%,0) scale(1.08); } }
+@keyframes fg-grain{ 0%{ background-position:0 0; } 17%{ background-position:-70px 40px; } 34%{ background-position:50px -90px; } 50%{ background-position:-120px -30px; } 67%{ background-position:80px 110px; } 84%{ background-position:-30px 70px; } 100%{ background-position:0 0; } }
+
+html[data-fog-noise="low"] .fg-backdrop::before,
+html[data-fog-noise="low"] .fg-backdrop::after{ animation:none; }
+html[data-fog-noise="low"] .fg-backdrop::after{ opacity:.12; }
+html[data-fog-noise="off"] .fg-backdrop::before{ animation:none; }
+html[data-fog-noise="off"] .fg-backdrop::after{ display:none; }
+
+/* low-res 3D canvas scaled up without smoothing */
+.fg-scene{ position:absolute; inset:0; width:100%; height:100%; display:block; image-rendering:pixelated; image-rendering:crisp-edges; background-size:cover; background-position:center; }
+.fg-snow{ position:absolute; inset:0; width:100%; height:100%; image-rendering:pixelated; }
+
+/* ------------------------------------------------------- red pen marks
+   Hover and keyboard focus draw a circle, like a destination on the map. */
+.fg-pen{ position:relative; }
+.fg-pen::after{ content:""; position:absolute; inset:-7px -12px; pointer-events:none; z-index:2;
+  background:var(--fg-pen-circle) center/100% 100% no-repeat;
+  -webkit-mask:conic-gradient(from -80deg, #000 var(--fg-draw), transparent 0);
+          mask:conic-gradient(from -80deg, #000 var(--fg-draw), transparent 0);
+  --fg-draw:0deg; transition:--fg-draw .32s ease-out; }
+.fg-pen:hover::after,.fg-pen:focus-visible::after,.fg-pen.is-marked::after,
+a:hover > .fg-pen::after,a:focus-visible > .fg-pen::after{ --fg-draw:360deg; }
+.fg-pen:focus-visible{ outline:none; }
+html[data-fog-noise="off"] .fg-pen::after{ transition:none; }
+/* visited places get a tick, dead ones are scribbled out */
+.fg-tick::before{ content:""; display:inline-block; width:.9em; height:.9em; margin-right:.35em; vertical-align:-.08em; background:var(--fg-pen-tick) center/contain no-repeat; }
+.fg-scribbled{ position:relative; }
+.fg-scribbled::before{ content:""; position:absolute; inset:18% -4%; pointer-events:none; z-index:2; background:var(--fg-pen-scribble) center/100% 100% no-repeat; }
+.fg-underline{ background:var(--fg-pen-line) left bottom/100% .35em no-repeat; padding-bottom:.2em; }
+
+/* ---------------------------------------------------------------- buttons
+   Quiet objects: a stamped metal plate. Selected is only slightly brighter. */
+.fg-btn{ position:relative; display:inline-flex; align-items:center; justify-content:center; gap:.75em;
+  min-height:42px; padding:.55em 1.5em; margin:0; cursor:pointer; user-select:none;
+  font-family:var(--fg-sans); font-weight:500; font-size:.74rem; letter-spacing:.2em; text-transform:uppercase; line-height:1.1; text-decoration:none;
+  color:var(--fg-fog-3); background-color:rgba(12,13,14,.55);
+  border:1px solid var(--fg-line-strong); border-radius:1px;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.5);
+  transition:color .18s, background-color .18s, border-color .18s; -webkit-tap-highlight-color:transparent; }
+.fg-btn:hover,.fg-btn:focus-visible{ color:#f4f1ea; background-color:rgba(189,184,182,.1); border-color:var(--fg-fog-2); }
+.fg-btn:focus-visible{ outline:none; }
+/* the red circle on hover and focus */
+.fg-btn::after{ content:""; position:absolute; inset:-6px -10px; pointer-events:none;
+  background:var(--fg-pen-circle) center/100% 100% no-repeat;
+  -webkit-mask:conic-gradient(from -80deg, #000 var(--fg-draw), transparent 0);
+          mask:conic-gradient(from -80deg, #000 var(--fg-draw), transparent 0);
+  --fg-draw:0deg; transition:--fg-draw .32s ease-out; }
+.fg-btn:hover::after,.fg-btn:focus-visible::after{ --fg-draw:360deg; }
+/* a short flicker of static on press */
+.fg-btn::before{ content:""; position:absolute; inset:0; pointer-events:none; background:var(--fg-static); opacity:0; mix-blend-mode:screen; }
+.fg-btn:active::before{ animation:fg-press .16s steps(3) 1; }
+.fg-btn:active{ transform:translateY(1px); }
+@keyframes fg-press{ 0%{ opacity:.7; background-position:0 0; } 50%{ opacity:.45; background-position:40px -60px; } 100%{ opacity:.6; background-position:-30px 20px; } }
+html[data-fog-noise="off"] .fg-btn:active::before{ animation:none; }
+html[data-fog-noise="off"] .fg-btn::after{ transition:none; }
+/* primary: the red save square. One per view. */
+.fg-btn--primary{ color:#f4f1ea; border-color:var(--fg-fog-1); background-color:rgba(189,184,182,.07); }
+.fg-btn--primary .fg-sq,.fg-sq{ display:inline-block; flex:none; width:.72em; height:.72em; background:var(--fg-red); box-shadow:0 0 0 1px rgba(0,0,0,.6), 0 0 10px rgba(181,18,27,.45); }
+/* disabled: scribbled out */
+.fg-btn:disabled,.fg-btn[aria-disabled="true"],.fg-btn.is-disabled{ cursor:not-allowed; color:var(--fg-faint); background-color:var(--fg-ash-2); transform:none; }
+.fg-btn:disabled::after,.fg-btn[aria-disabled="true"]::after,.fg-btn.is-disabled::after{ inset:22% 6%; background-image:var(--fg-pen-scribble); -webkit-mask:none; mask:none; opacity:.8; }
+.fg-btn:disabled::before,.fg-btn[aria-disabled="true"]::before{ display:none; }
+/* secondary object: a strip of typed paper */
+.fg-btn--paper{ font-family:var(--fg-sans); font-size:.72rem; letter-spacing:.18em; color:var(--fg-ink); text-shadow:none;
+  background-color:var(--fg-paper); background-image:none; border-color:transparent; box-shadow:0 1px 2px rgba(0,0,0,.5);
+  clip-path:polygon(0 6%,2% 0,98% 3%,100% 0,99% 52%,100% 100%,97% 96%,3% 100%,0 95%,1% 48%); }
+.fg-btn--paper:hover,.fg-btn--paper:focus-visible{ color:#000; background-color:#dcd6c3; }
+.fg-btn--paper::after{ display:none; }
+.fg-btn--paper:hover,.fg-btn--paper:focus-visible{ background-image:var(--fg-pen-line); background-repeat:no-repeat; background-size:76% .4em; background-position:50% 86%; }
+/* secondary object: a brass key tag */
+.fg-btn--tag{ padding-left:2.4em; color:#17140d; font-size:.72rem;
+  background-color:var(--fg-brass);
+  background-image:radial-gradient(circle at 1.05em 50%, var(--fg-ash-1) 0 .28em, rgba(0,0,0,.35) .3em .36em, transparent .38em);
+  border-color:#5d5136; border-radius:1.3em 3px 3px 1.3em;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.25), 0 1px 0 rgba(0,0,0,.6); }
+.fg-btn--tag:hover,.fg-btn--tag:focus-visible{ color:#000; background-color:#a08c5e; }
+/* quiet link: menu text, selected option slightly brighter */
+.fg-link{ position:relative; font-family:var(--fg-serif); font-weight:500; color:var(--fg-fog-2); text-decoration:none; cursor:pointer; transition:color .15s;
+  background:var(--fg-pen-line) left 100%/0% .32em no-repeat; padding-bottom:.18em; }
+.fg-link:hover,.fg-link:focus-visible,.fg-link[aria-current]{ color:#f1ede4; background-size:100% .32em; outline:none; }
+button.fg-link{ border:0; background-color:transparent; padding:0 0 .18em; font-size:inherit; }
+html:not([data-fog-noise="off"]) .fg-link{ transition:color .15s, background-size .25s ease-out; }
+/* icon button: an elevator button */
+.fg-iconbtn{ position:relative; display:inline-grid; place-items:center; width:44px; height:44px; padding:0; cursor:pointer;
+  color:var(--fg-fog-3); background:var(--fg-ash-2); border:1px solid var(--fg-ash-5); border-radius:50%;
+  box-shadow:inset 0 0 0 3px var(--fg-ash-3), inset 0 0 0 4px rgba(0,0,0,.6), 0 1px 0 rgba(0,0,0,.6); transition:color .15s, box-shadow .15s; }
+.fg-iconbtn svg{ width:18px; height:18px; }
+.fg-iconbtn:hover,.fg-iconbtn:focus-visible,.fg-iconbtn[aria-pressed="true"]{ color:#f6e7bd; outline:none;
+  box-shadow:inset 0 0 0 3px var(--fg-ash-3), inset 0 0 0 4px rgba(214,178,94,.75), 0 0 12px rgba(214,178,94,.22); }
+.fg-iconbtn:active{ transform:translateY(1px); }
+
+/* --------------------------------------------------------------- toggle */
+.fg-toggle{ display:inline-flex; align-items:center; gap:.7em; cursor:pointer; font-family:var(--fg-sans); font-size:.9rem; color:var(--fg-fog-3); }
+.fg-toggle input{ position:absolute; opacity:0; width:1px; height:1px; }
+.fg-toggle i{ position:relative; flex:none; width:46px; height:22px; background:var(--fg-void); border:1px solid var(--fg-ash-5); box-shadow:inset 0 2px 4px rgba(0,0,0,.8); }
+.fg-toggle i::before{ content:""; position:absolute; top:2px; left:2px; width:18px; height:16px; background:var(--fg-ash-5); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), inset 6px 0 0 -5px rgba(0,0,0,.5), inset -6px 0 0 -5px rgba(0,0,0,.5); transition:transform .12s steps(3); }
+.fg-toggle i::after{ content:""; position:absolute; top:50%; right:-12px; width:5px; height:5px; margin-top:-2.5px; border-radius:50%; background:var(--fg-ash-4); }
+.fg-toggle input:checked + i::before{ transform:translateX(22px); background:var(--fg-fog-2); }
+.fg-toggle input:checked + i::after{ background:#e9dfbf; box-shadow:0 0 6px rgba(233,223,191,.7); }
+.fg-toggle input:focus-visible + i{ outline:1px solid var(--fg-fog-3); outline-offset:3px; }
+
+/* ------------------------------------------------------- input, select */
+.fg-input,.fg-select{ width:100%; min-height:42px; padding:.5em .75em; font:inherit; font-family:var(--fg-sans); color:var(--fg-text);
+  background:rgba(0,0,0,.42); border:1px solid var(--fg-ash-5); border-radius:1px; box-shadow:inset 0 2px 5px rgba(0,0,0,.6);
+  transition:border-color .15s; appearance:none; -webkit-appearance:none; }
+.fg-input::placeholder{ color:var(--fg-faint); font-style:normal; }
+.fg-input:hover,.fg-select:hover{ border-color:var(--fg-fog-1); }
+.fg-input:focus,.fg-select:focus{ outline:none; border-color:var(--fg-fog-2);
+  background-image:var(--fg-pen-line); background-repeat:no-repeat; background-size:calc(100% - 1.2em) .4em; background-position:50% calc(100% - 3px); }
+.fg-select{ padding-right:2.2em; cursor:pointer;
+  background-image:linear-gradient(45deg, transparent 50%, var(--fg-fog-2) 50%), linear-gradient(-45deg, transparent 50%, var(--fg-fog-2) 50%);
+  background-size:6px 6px, 6px 6px; background-position:calc(100% - 17px) 50%, calc(100% - 11px) 50%; background-repeat:no-repeat; }
+.fg-select:focus{ background-image:linear-gradient(45deg, transparent 50%, var(--fg-fog-3) 50%), linear-gradient(-45deg, transparent 50%, var(--fg-fog-3) 50%); background-size:6px 6px, 6px 6px; background-position:calc(100% - 17px) 50%, calc(100% - 11px) 50%; }
+.fg-select option{ background:var(--fg-ash-2); color:var(--fg-text); }
+.fg-field{ display:grid; gap:.3em; }
+.fg-field > span{ font-size:.66rem; font-weight:500; letter-spacing:.24em; text-transform:uppercase; color:var(--fg-dim); }
+
+/* ------------------------------------------------------------------ card */
+.fg-card{ position:relative; background:var(--fg-surface); border:1px solid var(--fg-line); border-radius:1px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.5), 0 14px 40px -18px rgba(0,0,0,.8); padding:1.25rem 1.4rem; }
+.fg-card--plain{ box-shadow:none; }
+/* a typed memo, as found lying around */
+.fg-card--memo{ color:var(--fg-ink); background:var(--fg-paper); border:0; font-family:var(--fg-serif); font-size:1.12em; font-weight:500;
+  box-shadow:0 2px 0 var(--fg-paper-2), 0 16px 34px -14px rgba(0,0,0,.85); }
+.fg-card--memo h1,.fg-card--memo h2,.fg-card--memo h3{ color:var(--fg-ink); }
+a.fg-card{ display:block; text-decoration:none; color:inherit; transition:border-color .15s; }
+a.fg-card:hover,a.fg-card:focus-visible{ border-color:var(--fg-line-strong); outline:none; }
+
+/* inventory: lists of small things (SH2 item screen) */
+.fg-inventory{ display:flex; flex-wrap:wrap; gap:.5rem; list-style:none; margin:0; padding:0; }
+.fg-item{ display:inline-flex; align-items:center; gap:.55em; padding:.34em .8em .34em .6em; font-family:var(--fg-sans); font-size:.8rem; letter-spacing:.04em; color:var(--fg-fog-3);
+  background:rgba(0,0,0,.36); border:1px solid var(--fg-line); }
+.fg-item::before{ content:""; width:.5em; height:.5em; flex:none; background:var(--fg-c, var(--fg-fog-1)); filter:saturate(.35) brightness(.9); }
+.fg-item:hover{ color:#f1ede4; border-color:var(--fg-line-strong); }
+
+/* ---------------------------------------------------- dialog (item prompt)
+   "There is a ... here. Will you take it?   Yes / No"                      */
+.fg-dialog{ margin:auto; width:min(92vw,520px); padding:0; color:var(--fg-text); background:rgba(6,7,8,.96); border:1px solid var(--fg-line-strong); border-radius:0;
+  box-shadow:0 0 0 1px #000, 0 30px 80px rgba(0,0,0,.8); font-family:var(--fg-serif); }
+.fg-dialog::backdrop{ background:rgba(8,9,10,.72); }
+.fg-dialog__body{ padding:2.2rem 1.8rem 1.1rem; font-size:1.45rem; font-weight:400; line-height:1.5; text-align:center; text-wrap:balance; }
+.fg-dialog__body small{ display:block; margin-top:.8em; font-family:var(--fg-sans); font-size:.78rem; letter-spacing:.02em; color:var(--fg-dim); }
+.fg-dialog__opts{ display:flex; justify-content:center; gap:2.6rem; padding:.4rem 1rem 1.7rem; }
+.fg-opt{ position:relative; padding:.3em .7em; font:inherit; font-size:1.4rem; color:var(--fg-fog-1); background:none; border:0; cursor:pointer; }
+.fg-opt:hover,.fg-opt:focus-visible{ color:#f4f0e6; outline:none; }
+.fg-opt::before{ content:""; position:absolute; left:-.55em; top:50%; width:.5em; height:.5em; margin-top:-.25em; background:var(--fg-red); opacity:0; }
+.fg-opt:hover::before,.fg-opt:focus-visible::before{ opacity:1; }
+
+/* ---------------------------------------------------------------- toast */
+.fg-toasts{ position:fixed; z-index:9000; left:50%; bottom:22px; transform:translateX(-50%); display:grid; gap:8px; width:min(92vw,440px); pointer-events:none; }
+.fg-toast{ pointer-events:auto; padding:.8em 1.1em; font-family:var(--fg-sans); font-size:.84rem; color:var(--fg-text); background:rgba(8,9,10,.94); border:1px solid var(--fg-line-strong); box-shadow:0 12px 30px rgba(0,0,0,.7); animation:fg-toast .25s ease-out; }
+.fg-toast--bad{ color:#f0d9cc; background:var(--fg-rust-2) var(--fg-grating); box-shadow:0 0 0 1px var(--fg-rust), 0 12px 30px rgba(0,0,0,.7); }
+@keyframes fg-toast{ from{ opacity:0; transform:translateY(8px); } }
+
+/* ------------------------------------------------------- the pocket radio
+   Loading is a radio searching for a station.                              */
+.fg-radio{ display:inline-grid; gap:.6em; justify-items:center; color:var(--fg-dim); font-family:var(--fg-sans); font-weight:500; font-size:.64rem; letter-spacing:.26em; text-transform:uppercase; }
+.fg-radio__dial{ position:relative; width:168px; height:26px; background:var(--fg-void); border:1px solid var(--fg-ash-5); overflow:hidden;
+  background-image:repeating-linear-gradient(90deg, var(--fg-fog-1) 0 1px, transparent 1px 12px), repeating-linear-gradient(90deg, var(--fg-ash-5) 0 1px, transparent 1px 4px);
+  background-size:100% 9px, 100% 5px; background-repeat:no-repeat; background-position:0 100%, 0 100%; }
+.fg-radio__dial::before{ content:""; position:absolute; inset:0; background:var(--fg-static); opacity:.35; mix-blend-mode:screen; animation:fg-grain .5s steps(5) infinite; }
+.fg-radio__dial::after{ content:""; position:absolute; top:0; bottom:0; left:0; width:2px; background:var(--fg-pen); animation:fg-seek 2.8s ease-in-out infinite alternate; }
+@keyframes fg-seek{ 0%{ transform:translateX(8px); } 35%{ transform:translateX(96px); } 55%{ transform:translateX(70px); } 100%{ transform:translateX(156px); } }
+html[data-fog-noise="off"] .fg-radio__dial::before{ display:none; }
+html[data-fog-noise="off"] .fg-radio__dial::after{ animation-duration:6s; }
+
+/* static: something is near. Put on the thing that is in trouble. */
+.fg-static{ position:relative; isolation:isolate; }
+.fg-static::before{ content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background:var(--fg-static); opacity:.28; animation:fg-grain .45s steps(5) infinite; }
+html[data-fog-noise="low"] .fg-static::before{ animation:none; }
+html[data-fog-noise="off"] .fg-static::before{ animation:none; opacity:.16; }
+
+/* ---------------------------------------------------------- empty state */
+.fg-empty{ padding:2.4rem 1rem; text-align:center; font-family:var(--fg-serif); font-style:italic; font-size:1.35rem; color:var(--fg-fog-2); }
+.fg-empty::before{ content:""; display:block; width:74px; height:30px; margin:0 auto 1rem; border-radius:50%; background:radial-gradient(closest-side, #000 55%, rgba(0,0,0,.5) 75%, transparent); }
+
+/* ------------------------------------------------- health as a portrait
+   --fg-h: 0 (fine) .. 1 (dying). A tinted, noisy frame instead of a bar.  */
+.fg-health{ --fg-h:0; position:relative; display:inline-block; width:44px; height:52px; flex:none; overflow:hidden; border:1px solid var(--fg-ash-5); background:#000;
+  --fg-tint:color-mix(in oklab, var(--fg-fine), var(--fg-hurt) calc(var(--fg-h) * 200%)); }
+.fg-health[data-level="hurt"]{ --fg-h:.5; }
+.fg-health[data-level="dying"]{ --fg-h:1; --fg-tint:var(--fg-dying); }
+.fg-health[data-level="fine"]{ --fg-h:0; }
+.fg-health::before{ content:""; position:absolute; inset:0; background:
+  radial-gradient(60% 34% at 50% 34%, rgba(0,0,0,.55) 60%, transparent 62%),
+  radial-gradient(90% 46% at 50% 100%, rgba(0,0,0,.55) 60%, transparent 62%),
+  var(--fg-tint); }
+.fg-health::after{ content:""; position:absolute; inset:0; background:var(--fg-static); mix-blend-mode:multiply; opacity:calc(.35 + var(--fg-h) * .5); animation:fg-grain calc(1.4s - var(--fg-h) * 1s) steps(5) infinite; }
+html[data-fog-noise="low"] .fg-health::after,html[data-fog-noise="off"] .fg-health::after{ animation:none; }
+
+/* ----------------------------------------------- extra options (settings)
+   The "Noise Effect" switch from the SH2/SH3 extra menu, on every site.    */
+.fg-options-btn{ position:fixed; z-index:8000; right:14px; bottom:14px; padding:.35em .8em; cursor:pointer;
+  font-family:var(--fg-sans); font-weight:500; font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--fg-fog-2); background:rgba(8,9,10,.7); border:1px solid var(--fg-line); border-radius:1px; }
+.fg-options-btn:hover,.fg-options-btn:focus-visible{ color:#f1ede4; border-color:var(--fg-line-strong); outline:none; }
+@media (max-width:600px){ .fg-options-btn{ right:8px; bottom:8px; font-size:.74rem; padding:.2em .55em; opacity:.8; } }
+.fg-options{ margin:auto; width:min(92vw,420px); padding:1.5rem 1.6rem 1.3rem; color:var(--fg-text); background:rgba(6,7,8,.97); border:1px solid var(--fg-line-strong); border-radius:0; font-family:var(--fg-serif); box-shadow:0 30px 80px rgba(0,0,0,.8); }
+.fg-options::backdrop{ background:rgba(8,9,10,.6); }
+.fg-options h2{ margin:0 0 1rem; font:400 1.6rem var(--fg-serif); letter-spacing:.04em; color:var(--fg-fog-3); text-align:center; }
+.fg-options__row{ display:flex; align-items:baseline; justify-content:space-between; gap:1rem; padding:.42rem 0; border-top:1px solid var(--fg-line); }
+.fg-options__row > span{ color:var(--fg-fog-2); font-size:1.25rem; }
+.fg-options__vals{ display:flex; gap:.2rem; }
+.fg-options__vals button{ padding:.15em .55em; font:inherit; font-size:1.25rem; color:var(--fg-faint); background:none; border:0; cursor:pointer; }
+.fg-options__vals button:hover,.fg-options__vals button:focus-visible{ color:var(--fg-fog-3); outline:none; }
+.fg-options__vals button[aria-pressed="true"]{ color:#f4f0e6; background:var(--fg-pen-line) center 100%/80% .3em no-repeat; }
+.fg-options__note{ margin:.9rem 0 0; font-family:var(--fg-sans); font-size:.72rem; color:var(--fg-faint); text-align:center; }
+.fg-options__close{ display:block; margin:1rem auto 0; }
+
+/* ==========================================================================
+   DECEMBER LAYER — html[data-fog-season="xmas"]
+   The fog starts to snow (SH1). Quiet Christmas Eve, warm in small spots.
+   ========================================================================== */
+html[data-fog-season="xmas"]{
+  --fg-warm:#e8b96a;
+  --fg-snowcap:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 14' preserveAspectRatio='none'%3E%3Cpath d='M0 14V8c8-5 16-6 26-3 9-5 22-5 30 0 10-4 24-4 33 1 9-5 20-4 28 0 11-5 24-5 34 0 9-4 19-4 27 1 10-5 22-5 31-1 8-3 20-3 31 2v6z' fill='%23dfe3e4'/%3E%3Cpath d='M0 14v-3c40-3 80 1 120-1s80-1 120 1v3z' fill='%23aeb6ba' opacity='.7'/%3E%3C/svg%3E");
+}
+html[data-fog-season="xmas"] .fg-backdrop{
+  background:
+    radial-gradient(120% 70% at 50% 108%, #33363a 0%, transparent 60%),
+    linear-gradient(180deg, #34363d 0%, #454852 34%, #565a64 52%, #34373b 78%, #1a1c1e 100%); }
+/* snow settles on the top edge of cards */
+html[data-fog-season="xmas"] .fg-card:not(.fg-card--nosnow)::before{ content:""; position:absolute; left:-3px; right:-3px; top:-9px; height:12px; pointer-events:none;
+  background:var(--fg-snowcap) center/100% 100% no-repeat; filter:drop-shadow(0 1px 0 rgba(0,0,0,.35)); }
+/* fairy lights on a wire; they flicker like the radio when .is-down */
+.fg-lights{ display:none; }
+html[data-fog-season="xmas"] .fg-lights{ display:block; position:relative; height:22px; pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 100%, transparent 0 18px, transparent 18px) 0 0,
+    radial-gradient(3.5px 4.5px at 12px 13px, #e8b96a 60%, transparent 62%) 0 0/96px 22px repeat-x,
+    radial-gradient(3.5px 4.5px at 36px 16px, #c9d6c0 60%, transparent 62%) 0 0/96px 22px repeat-x,
+    radial-gradient(3.5px 4.5px at 60px 16px, #d98b6c 60%, transparent 62%) 0 0/96px 22px repeat-x,
+    radial-gradient(3.5px 4.5px at 84px 13px, #b9c7d6 60%, transparent 62%) 0 0/96px 22px repeat-x,
+    radial-gradient(48px 9px at 48px 3px, transparent 96%, rgba(10,10,10,.9) 97%, rgba(10,10,10,.9) 100%, transparent 0) 0 0/96px 22px repeat-x;
+  filter:drop-shadow(0 0 5px rgba(232,185,106,.5)); }
+html[data-fog-season="xmas"] .fg-lights.is-down{ animation:fg-flicker 1.7s steps(1) infinite; }
+@keyframes fg-flicker{ 0%{ opacity:1; } 8%{ opacity:.25; } 12%{ opacity:.9; } 31%{ opacity:.15; } 36%{ opacity:.8; } 62%{ opacity:.3; } 66%{ opacity:1; } 88%{ opacity:.2; } 92%{ opacity:.85; } }
+html[data-fog-noise="low"] .fg-lights.is-down,html[data-fog-noise="off"] .fg-lights.is-down{ animation:none; opacity:.35; }
+.fg-xmas-only{ display:none !important; }
+html[data-fog-season="xmas"] .fg-xmas-only{ display:revert !important; }
+html[data-fog-season="xmas"] .fg-fog-only{ display:none !important; }
+
+@media (prefers-reduced-motion: reduce){
+  .fg-backdrop::before,.fg-backdrop::after,.fg-static::before,.fg-health::after,.fg-radio__dial::before{ animation:none !important; }
+  .fg-pen::after,.fg-btn::after,.fg-link{ transition:none !important; }
+}
