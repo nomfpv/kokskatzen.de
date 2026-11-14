@@ -263,10 +263,10 @@ html[data-fog-noise="off"] #gate{ transition:none; }
 @media (max-width:480px){ .tech{ grid-template-columns:1fr; gap:.35rem; } .tech .tl{ padding-top:0; } }
 /* project cards with a GitHub mark (outside the card link: links cannot nest) */
 .pw{ position:relative; display:grid; }
-.pw.has-gh .proj{ padding-right:2.9rem !important; }
-.gh{ position:absolute; top:.75rem; right:.8rem; z-index:2; padding:2px; color:#d9d5cd; opacity:.45; transition:opacity .18s; text-decoration:none; }
-.gh pre{ margin:0; font:3.6px/1.02 "Cascadia Mono","Segoe UI Symbol",Consolas,monospace; user-select:none; }
-.gh:hover,.gh:focus-visible{ opacity:1; }
+.pw.has-gh .proj{ padding-right:3.3rem !important; }
+.gh{ position:absolute; top:.7rem; right:.75rem; z-index:2; padding:3px; color:#f4f1ea; opacity:.85; transition:opacity .18s, filter .18s; text-decoration:none; filter:drop-shadow(0 0 1px #000) drop-shadow(0 0 4px rgba(0,0,0,.9)); }
+.gh pre{ margin:0; font:4.6px/1.02 "Cascadia Mono","Segoe UI Symbol",Consolas,monospace; font-weight:700; user-select:none; }
+.gh:hover,.gh:focus-visible{ opacity:1; filter:drop-shadow(0 0 1px #000) drop-shadow(0 0 6px rgba(244,241,234,.45)); }
 </style>
 </head>
 <body class="fg-root">
