@@ -1,6 +1,6 @@
 # nom
 
-Source of [kokskatzen.de](https://kokskatzen.de), a one-page site set on a foggy road.
+Source of [kokskatzen.de](https://kokskatzen.de), 
 
 ![kokskatzen.de](docs/road.png)
 
@@ -51,8 +51,4 @@ python -m http.server 8000
 It needs a server, not `file://`, because the cat mesh is loaded with `fetch`. The audio
 track isn't included. Put one at `audio/theme.mp3`; if the file is missing, the volume
 control hides itself.
-
-## credits
-
-- [Cute Spooky Cat](https://sketchfab.com/3d-models/cute-spooky-cat-563ee36ca4904008a55ff4deb4f48209) by Felix Yadomi, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - Inter and Cormorant Garamond, [SIL OFL 1.1](https://openfontlicense.org)
